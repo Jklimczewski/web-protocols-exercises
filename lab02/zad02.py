@@ -1,6 +1,6 @@
 import paramiko
 
-command = "ls"
+command = "cat"
 
 ssh = paramiko.SSHClient()
 ssh.load_system_host_keys()
@@ -9,12 +9,13 @@ ssh.connect("sigma.ug.edu.pl")
 # name = input("Which file: ")
 name = "/home/jklimczewski/test.txt"
 stdin, stdout, stderr = ssh.exec_command(command + " " + name)
-if not stderr.readline():
-    # lines = stdout.readline()
-    # print(lines)
-    stdin2, stdout2, stderr2 = ssh.exec_command("cat" + " " + name)
-    print(stdout2.readline())
+lines = [line.rstrip() for line in stdout]
+if lines:
+    for line in lines:
+        print(line)
 else:
-    print("err")
+    print("Zła ścieżka pliku!")
 
-ssh.close()
+if ssh is not None:
+    ssh.close()
+    del ssh, stdin, stdout, stderr
