@@ -1,23 +1,37 @@
+const { v4: uuidv4 } = require('uuid');
 const express = require('express');
-const cors = require("cors")
-const app = express()
+const cors = require("cors");
+const bodyParser = require('body-parser');
+const app = express();
+const jsonParser = bodyParser.json();
 app.use(cors());
 
 const games = {};
 app.get('/', (req, res) => {
-    games["1"] = new Game()
-    res.send("Lets start");
+    const player = uuidv4();
+    games[player] = new Game();
+    res.send("Starting the game with " + player);
 });
-app.get('/newgame', (req, res) => {
-    res.send(games["1"].getBoard());
+app.get('/:game', (req, res) => {
+    res.send(games[req.params.game].getBoard());
 });
-    // app.post('/newgame', (req, res) => {
-    //     res.send(game.insert())
-    // })
-
-// app.post('/', (req, res) => {
-//     res.send("Posting appearing\n");
-// })
+app.post('/:game', jsonParser, (req, res) => {
+    const x = req.body.x;
+    const y = req.body.y;
+    console.log(x);
+    console.log(y);
+    res.send(games[req.params.game].insert("x", x, y));
+});
+app.put('/:game', jsonParser, (req, res) => {
+    const x = req.body.x;
+    const y = req.body.y;
+    console.log(x);
+    console.log(y);
+    res.send(games[req.params.game].changeLast(x, y));
+});
+app.delete('/:game', (req, res) => {
+    res.send(games[req.params.game].deleteLast());
+});
 
 app.listen(3000);
 
@@ -30,7 +44,7 @@ class Game {
             ['-------------'],
             [ '', ' | ', '', ' | ', '' ]
         ];
-        this.logs = []
+        this.logs = [];
     }
     getBoard() {
         return this.board;
@@ -69,25 +83,16 @@ class Game {
     }
     deleteLast() {
         const last = this.logs.pop();
-        console.log(last)
+        console.log(last);
         this.board[last.x*2][last.y*2] = '';
     }
     changeLast(x, y) {
         if (this.checkIfFree(x, y)) {
-            const changedSign = this.logs[this.logs.length-1].sign
-            this.deleteLast()
-            this.insert(changedSign, x , y)
+            const changedSign = this.logs[this.logs.length-1].sign;
+            this.deleteLast();
+            this.board[x*2][y*2] = changedSign;
+            this.logs.push({"sign": changedSign, "x": x, "y": y})
         }
-        else console.log("Zamiana nie wykonana: Miejsce zajęte!")
+        else console.log("Zamiana nie wykonana: Miejsce zajęte!");
     }
 }
-
-// const game = new Game();
-// game.getBoard();
-// game.insert("x", 1, 1);
-// game.insert("x", 0, 1);
-// game.insert("x", 2, 1);
-// game.deleteLast();
-// game.deleteLast();
-// game.changeLast(1, 2)
-// game.getBoard();
