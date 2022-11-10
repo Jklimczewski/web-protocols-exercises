@@ -1,16 +1,25 @@
-// const express = require('express');
+const express = require('express');
+const cors = require("cors")
+const app = express()
+app.use(cors());
 
-// const app = express()
-
-// app.get('/', (req, res) => {
-//     res.send("Get request appearing\n");
-// });
+const games = {};
+app.get('/', (req, res) => {
+    games["1"] = new Game()
+    res.send("Lets start");
+});
+app.get('/newgame', (req, res) => {
+    res.send(games["1"].getBoard());
+});
+    // app.post('/newgame', (req, res) => {
+    //     res.send(game.insert())
+    // })
 
 // app.post('/', (req, res) => {
 //     res.send("Posting appearing\n");
 // })
 
-// app.listen(3001);
+app.listen(3000);
 
 class Game {
     constructor() {
@@ -24,7 +33,7 @@ class Game {
         this.logs = []
     }
     getBoard() {
-        console.log(this.board);
+        return this.board;
     }
     insert(sign, x, y) {
         if (this.checkIfFree(x, y)) {
@@ -73,12 +82,12 @@ class Game {
     }
 }
 
-const game = new Game();
-game.getBoard();
-game.insert("x", 1, 1);
-game.insert("x", 0, 1);
-game.insert("x", 2, 1);
-game.deleteLast();
-game.deleteLast();
-game.changeLast(1, 2)
-game.getBoard();
+// const game = new Game();
+// game.getBoard();
+// game.insert("x", 1, 1);
+// game.insert("x", 0, 1);
+// game.insert("x", 2, 1);
+// game.deleteLast();
+// game.deleteLast();
+// game.changeLast(1, 2)
+// game.getBoard();
