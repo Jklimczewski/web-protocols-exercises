@@ -18,15 +18,11 @@ app.get('/:game', (req, res) => {
 app.post('/:game', jsonParser, (req, res) => {
     const x = req.body.x;
     const y = req.body.y;
-    console.log(x);
-    console.log(y);
     res.send(games[req.params.game].insert("x", x, y));
 });
 app.put('/:game', jsonParser, (req, res) => {
     const x = req.body.x;
     const y = req.body.y;
-    console.log(x);
-    console.log(y);
     res.send(games[req.params.game].changeLast(x, y));
 });
 app.delete('/:game', (req, res) => {
@@ -38,24 +34,47 @@ app.listen(3000);
 class Game {
     constructor() {
         this.board = [
-            [ '', ' | ', '', ' | ', '' ],
-            ['-------------'],
-            [ '', ' | ', '', ' | ', '' ],
-            ['-------------'],
-            [ '', ' | ', '', ' | ', '' ]
+            [' ', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
         ];
         this.logs = [];
     }
     getBoard() {
-        return this.board;
+        const topLine = "--------------------\n";
+        const inside = this.board.reduce((acc, el) => {
+            const helper = el.reduce((acc2, place) => {
+                return acc2 + " | " + place + " | "
+            }, "");
+            return acc + helper + "\n--------------------\n";
+        }, "");
+        return topLine + inside;
     }
     insert(sign, x, y) {
         if (this.checkIfFree(x, y)) {
-            this.board[x*2][y*2] = sign;
+            this.board[x][y] = sign;
             this.logs.push({"sign": sign, "x": x, "y": y})
-            this.automatic(sign);
+            const your_move = this.logs[this.logs.length-1]
+            const game_res_before_comp = this.checkIfWin();
+            console.log(game_res_before_comp)
+            if (game_res_before_comp == "") {
+                const comp_move = this.automatic(sign);
+                const game_res_after_comp = this.checkIfWin();
+                console.log(game_res_after_comp)
+                if (game_res_after_comp == "") return "Twój ruch " + JSON.stringify(your_move) + "\n" + "Ruch komputera: " + JSON.stringify(comp_move)
+                else {
+                    const board = this.getBoard();
+                    this.clearAll();
+                    return board + "\n" + game_res_before_comp + "\n" + "Nowa gra!"
+                }
+            }
+            else {
+                const board = this.getBoard();
+                this.clearAll();
+                return board + "\n" + game_res_before_comp + "\n" + "Nowa gra!"
+            }
         }
-        else console.log("Ruch nie wykonany: Miejsce zajęte!");
+        else return "Ruch nie wykonany: Miejsce zajęte!";
     }
     automatic(sign) {
         const getRandomInt = () => {
@@ -67,32 +86,95 @@ class Game {
         const y2 = getRandomInt();
         if (this.checkIfFree(x2, y2)) {
             if (sign == "x") {
-                this.board[x2*2][y2*2] = "o";
-                this.logs.push({"sign": "o", "x": x2, "y": y2})
+                this.board[x2][y2] = "o";
+                this.logs.push({"sign": "o", "x": x2, "y": y2});
             }
             else {
-                this.board[x2*2][y2*2] = "x";
-                this.logs.push({"sign": "x", "x": x2, "y": y2})
+                this.board[x2][y2] = "x";
+                this.logs.push({"sign": "x", "x": x2, "y": y2});
             }
+            return this.logs[this.logs.length-1]
         } 
-        else this.automatic(sign);
+        else return this.automatic(sign);
     }
     checkIfFree(x, y) {
-        if (this.board[x*2][y*2] === '') return true;
+        if (this.board[x][y] === ' ') return true;
         else return false;
     }
     deleteLast() {
         const last = this.logs.pop();
-        console.log(last);
-        this.board[last.x*2][last.y*2] = '';
+        this.board[last.x][last.y] = ' ';
+        return "Usunąłeś ruch: " + JSON.stringify(last) + "\n"
     }
     changeLast(x, y) {
         if (this.checkIfFree(x, y)) {
             const changedSign = this.logs[this.logs.length-1].sign;
-            this.deleteLast();
-            this.board[x*2][y*2] = changedSign;
+            const infoDel = this.deleteLast();
+            this.board[x][y] = changedSign;
             this.logs.push({"sign": changedSign, "x": x, "y": y})
+            return infoDel + "\n" + "I zmieniłeś na: " + JSON.stringify(this.logs[this.logs.length-1])
         }
-        else console.log("Zamiana nie wykonana: Miejsce zajęte!");
+        else return "Zamiana nie wykonana: Miejsce zajęte!";
+    }
+    clearAll() {
+        this.board = [
+            [' ', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ];
+    }
+    checkIfWin() {
+        const inLine = () => {
+            for (let i = 0; i < 3; i++) {
+                let res = 0;
+                for (let j = 0; j < 3; j++) {
+                    if (this.board[i][j] == "x") res++;
+                    else if (this.board[i][j] == "o") res--;
+                }
+                if (res == 3) return "X WON";
+                else if (res == -3) return "O WON";
+                else res = 0;
+            }
+            return "";
+        }
+        const inColumn = () => {
+            for (let i = 0; i < 3; i++) {
+                let res = 0;
+                for (let j = 0; j < 3; j++) {
+                    if (this.board[j][i] == "x") res++;
+                    else if (this.board[j][i] == "o") res--;
+                }
+                if (res == 3) return "X WON";
+                else if (res == -3) return "O WON";
+                else res = 0;
+            }
+            return "";
+        }
+        const diagonal = () => {
+            let res = 0;
+            for (let i = 0; i < 3; i++) {
+                if (this.board[i][i] == "x") res++;
+                else if (this.board[i][i] == "o") res--;
+            }
+            if (res == 3) return "X WON";
+            else if (res == -3) return "O WON";
+            else res = 0;
+            let j = 2;
+            for (let i = 0; i < 3; i++) {
+                if (this.board[i][j] == "x") res++;
+                else if (this.board[i][j] == "o") res--;
+                j--;
+            }
+            if (res == 3) return "X WON";
+            else if (res == -3) return "O WON";
+            else return "";
+            }
+        const inLineRes = inLine();
+        const diagonalRes = diagonal();
+        const inColumnRes = inColumn();
+        if (inLineRes != "") return inLineRes;
+        else if (inColumnRes != "") return inColumnRes;
+        else if (diagonalRes != "") return diagonalRes;
+        else return "";
     }
 }
