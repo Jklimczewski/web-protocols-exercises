@@ -18,12 +18,14 @@ app.get('/:game', (req, res) => {
 app.post('/:game', jsonParser, (req, res) => {
     const x = req.body.x;
     const y = req.body.y;
-    res.send(games[req.params.game].insert("x", x, y));
+    if (x >=0 && x <= 2 && y >= 0 && y <=2) res.send(games[req.params.game].insert("x", x, y));
+    else res.send("Wrong move");
 });
 app.put('/:game', jsonParser, (req, res) => {
     const x = req.body.x;
     const y = req.body.y;
-    res.send(games[req.params.game].changeLast(x, y));
+    if (x >=0 && x <= 2 && y >= 0 && y <=2) res.send(games[req.params.game].changeLast(x, y));
+    else res.send("Wrong move");
 });
 app.delete('/:game', (req, res) => {
     res.send(games[req.params.game].deleteLast());
@@ -61,20 +63,20 @@ class Game {
                 const comp_move = this.automatic(sign);
                 const game_res_after_comp = this.checkIfWin();
                 console.log(game_res_after_comp)
-                if (game_res_after_comp == "") return "Twój ruch " + JSON.stringify(your_move) + "\n" + "Ruch komputera: " + JSON.stringify(comp_move)
+                if (game_res_after_comp == "") return "Your move " + JSON.stringify(your_move) + "\n" + "Computer move: " + JSON.stringify(comp_move)
                 else {
                     const board = this.getBoard();
                     this.clearAll();
-                    return board + "\n" + game_res_before_comp + "\n" + "Nowa gra!"
+                    return board + "\n" + game_res_before_comp + "\n" + "NEW GAME!"
                 }
             }
             else {
                 const board = this.getBoard();
                 this.clearAll();
-                return board + "\n" + game_res_before_comp + "\n" + "Nowa gra!"
+                return board + "\n" + game_res_before_comp + "\n" + "NEW GAME!"
             }
         }
-        else return "Ruch nie wykonany: Miejsce zajęte!";
+        else return "Wrong move: place taken!";
     }
     automatic(sign) {
         const getRandomInt = () => {
@@ -104,7 +106,7 @@ class Game {
     deleteLast() {
         const last = this.logs.pop();
         this.board[last.x][last.y] = ' ';
-        return "Usunąłeś ruch: " + JSON.stringify(last) + "\n"
+        return "Deleted move: " + JSON.stringify(last) + "\n"
     }
     changeLast(x, y) {
         if (this.checkIfFree(x, y)) {
@@ -112,9 +114,9 @@ class Game {
             const infoDel = this.deleteLast();
             this.board[x][y] = changedSign;
             this.logs.push({"sign": changedSign, "x": x, "y": y})
-            return infoDel + "\n" + "I zmieniłeś na: " + JSON.stringify(this.logs[this.logs.length-1])
+            return infoDel + "Instead changed on: " + JSON.stringify(this.logs[this.logs.length-1])
         }
-        else return "Zamiana nie wykonana: Miejsce zajęte!";
+        else return "Wrong switch: place taken!";
     }
     clearAll() {
         this.board = [
