@@ -1,8 +1,9 @@
+import Check from "./Check";
 
-function App() {
+const App = () => {
   return (
     <div>
-      Hey
+      <Check/>
     </div>
   );
 }
