@@ -5,19 +5,19 @@ let heating = true;
 
 client.on('connect', function () {
     console.log("ConnectedHeatingBedroom");
-    client.subscribe('bedroomTemp');
+    client.subscribe('adjustbedroomTemp');
 });
 
 client.on('message', function (topic, message) {
-    if (parseInt(message.toString()) > 25) {
-        heating = false;
-        client.publish("salonTemp", `heatingBedroom: ${heating}`)
-    }
-    else if (parseInt(message.toString()) <= 25) {
+    if (message.toString() == "HEAT") {
         heating = true;
-        client.publish("salonTemp", `heatingBedroom: ${heating}`)
+        client.publish("heating", `heatingBedroom: ${heating}`)
+    }
+    else if (message.toString() == "CHILL") {
+        heating = false;
+        client.publish("heating", `heatingBedroom: ${heating}`)
     }
     else {
-        console.log("Got a Wrong message")
+        console.log("Got a Wrong message");
     }
 })

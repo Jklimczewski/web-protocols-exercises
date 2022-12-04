@@ -9,5 +9,13 @@ client.on('connect', function () {
 });
 
 client.on('message', function (topic, message) {
-  console.log(topic + " -> " + message.toString());
+  if (parseInt(message.toString()) > 25) {
+    client.publish(`adjust${topic}`, "CHILL");
+  }
+  else if (parseInt(message.toString()) <= 25) {
+    client.publish(`adjust${topic}`, "HEAT");
+  }
+  else {
+    console.log("Wrong message");
+  }
 })
