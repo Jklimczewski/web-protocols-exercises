@@ -8,9 +8,9 @@ const router = express.Router();
 
 const users = [];
 
-router.get('/users', authenticateToken, (req, res) => {
+router.get('/account/info', authenticateToken, (req, res) => {
   const reqUser = req.user.username;
-  res.json(users);
+  res.status(200).send(reqUser);
 })
 
 router.post('/register', async (req, res) => {
@@ -47,6 +47,46 @@ router.post('/login', async (req, res) => {
   } catch {
     res.status(500).send();
   }
+})
+
+router.put('/account/update', authenticateToken, async (req, res) => {
+  const index = users.findIndex(user => user.username === req.user.username);
+  if (index == null) {
+    return res.status(409).send('Cannot find user');
+  }
+  const nameExists = users.find(user => user.username === req.body.usernameChange);
+  if (nameExists != null) {
+    return res.status(409).send('Name already taken');
+  }
+  try {
+    let user;
+    if (req.body.passwordChange == "" && req.body.usernameChange == "") return res.status(201).send();
+    else if (req.body.passwordChange == "") {
+      user = { username: req.body.usernameChange, password: req.user.password };
+    }
+    else if (req.body.usernameChange == "") {
+      const hashedPassword = await bcrypt.hash(req.body.passwordChange, 10);
+      user = { username: req.user.username, password: hashedPassword };
+    }
+    else {
+      const hashedPassword = await bcrypt.hash(req.body.passwordChange, 10);
+      user = { username: req.body.usernameChange, password: hashedPassword };
+    }
+    users.splice(index, 1);
+    users.push(user);
+    res.status(201).send();
+  } catch {
+    res.status(500).send();
+  }
+})
+
+router.delete('/account/delete', authenticateToken, (req, res) => {
+  const index = users.findIndex(user => user.username === req.user.username);
+  if (index == -1) {
+    return res.status(409).send('Cannot find user');
+  }
+  users.splice(index, 1);
+  res.status(200).send('Deleting...');
 })
 
 

@@ -4,6 +4,7 @@ import { HangmanWord } from "./HangmanWord"
 import { Keyboard } from "./Keyboard"
 import words from "./wordList.json"
 import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom"
 const cookies = new Cookies();
 
 function getWord() {
@@ -11,7 +12,8 @@ function getWord() {
 }
 
 function Game() {
-  const token = cookies.get("TOKEN");
+  const navigate = useNavigate()
+  const token = cookies.get("TOKEN")
   const [wordToGuess, setWordToGuess] = useState(getWord)
   const [guessedLetters, setGuessedLetters] = useState([])
 
@@ -32,6 +34,11 @@ function Game() {
     },
     [guessedLetters, isWinner, isLoser]
   )
+
+  const handleExit = () => {
+    navigate("/account")
+  }
+
   if (token) return (
     <div
       style={{
@@ -43,6 +50,7 @@ function Game() {
         alignItems: "center",
       }}
     >
+      <button onClick={handleExit}>You done ?</button>
       <div style={{ fontSize: "2rem", textAlign: "center" }}>
         {isWinner && "Winner! - Refresh to try again"}
         {isLoser && "Nice Try - Refresh to try again"}

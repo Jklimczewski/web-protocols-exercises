@@ -8,10 +8,11 @@ const cookies = new Cookies();
 
 
 function Login() {
+  const token = cookies.get("TOKEN");
   const [loggedIn, setLoggIn] = useState("");
   const navigate = useNavigate();
 
-  return (
+  if (!token) return (
     <>
       <h1>Login</h1>
       <Formik
@@ -28,13 +29,13 @@ function Login() {
             setTimeout(() => {
                 axios.post("http://localhost:5000/login", values)
                     .then(res => {
-                      cookies.set("TOKEN", res.data.accessToken, {
-                        path: "/",
-                      });
                       setLoggIn(res.data.message);
                       setTimeout(() => {
+                        cookies.set("TOKEN", res.data.accessToken, {
+                          path: "/",
+                        });
                         navigate(`/account`);
-                    }, 500);
+                      }, 500);
                     })
                     .catch(err => setLoggIn(err.response.data))
                 setSubmitting(false);
@@ -56,8 +57,11 @@ function Login() {
           </Form>
         </Formik>
         {loggedIn}
+        <br></br>
+        <a href="/register">Register</a>
     </>
   )
+  else window.location.href = "/account"
 }
 
 export default Login;

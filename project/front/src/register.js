@@ -50,6 +50,8 @@ function Register() {
               </Form>
             </Formik>
             {registered}
+            <br></br>
+            <a href="/login">Login</a>
         </>
       )
     }

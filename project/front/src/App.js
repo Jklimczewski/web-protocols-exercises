@@ -4,6 +4,7 @@ import Game from "./game/game";
 import Account from "./account"
 import Update from "./update"
 import Data from "./data"
+import NotFound from "./notFound"
 import { Route, Routes } from "react-router";
 
 function App() {  
@@ -16,6 +17,7 @@ function App() {
       <Route path="/account/game" element={<Game/>} />
       <Route path="/account/update" element={<Update/>} />
       <Route path="/account/update/data" element={<Data/>} />
+      <Route path="*" element={<NotFound/>} />
     </Routes>
   </>
   );
