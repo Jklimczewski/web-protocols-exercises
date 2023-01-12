@@ -3,6 +3,9 @@ import * as Yup from 'yup';
 import axios from "axios";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
+
 
 function Login() {
   const [loggedIn, setLoggIn] = useState("");
@@ -25,9 +28,12 @@ function Login() {
             setTimeout(() => {
                 axios.post("http://localhost:5000/login", values)
                     .then(res => {
-                      setLoggIn(res.data);
+                      cookies.set("TOKEN", res.data.accessToken, {
+                        path: "/",
+                      });
+                      setLoggIn(res.data.message);
                       setTimeout(() => {
-                        navigate(`/game`);
+                        navigate(`/account`);
                     }, 500);
                     })
                     .catch(err => setLoggIn(err.response.data))
