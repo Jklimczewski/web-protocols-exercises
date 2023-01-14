@@ -10,7 +10,7 @@ function Update() {
     const navigate = useNavigate();
     
     const handleDelete = () => {
-        axios.delete(`http://localhost:5000/account/delete`, {
+        axios.delete(`https://localhost:5000/account/delete`, {
             headers: {
               Authorization: `Bearer ${token}`
             }})

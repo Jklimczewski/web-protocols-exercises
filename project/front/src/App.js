@@ -5,12 +5,14 @@ import Account from "./account"
 import Update from "./update"
 import Data from "./data"
 import NotFound from "./notFound"
+import Words from "./words"
 import { Route, Routes } from "react-router";
 
 function App() {  
   return (
   <>
     <Routes>
+      <Route path="/words" element={<Words/>} />
       <Route path="/login" element={<Login/>} />
       <Route path="/register" element={<Register/>} />
       <Route path="/account" element={<Account/>} />

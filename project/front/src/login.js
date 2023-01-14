@@ -27,7 +27,7 @@ function Login() {
           })}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
-                axios.post("http://localhost:5000/login", values)
+                axios.post("https://localhost:5000/login", values)
                     .then(res => {
                       setLoggIn(res.data.message);
                       setTimeout(() => {
@@ -59,6 +59,8 @@ function Login() {
         {loggedIn}
         <br></br>
         <a href="/register">Register</a>
+        <br></br>
+        <a href="/words">Words List</a>
     </>
   )
   else window.location.href = "/account"

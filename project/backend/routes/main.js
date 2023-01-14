@@ -1,12 +1,35 @@
 const express = require("express");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const fs = require('fs')
 // const dbo = require("../db/conn");
 // const ObjectId = require("mongodb").ObjectId;
 
 const router = express.Router();
 
 const users = [];
+const wordList = require("../../front/src/game/wordList.json")
+
+
+router.post('/words', (req, res) => {
+  const pattern = req.body.pattern
+  const result = wordList.reduce((acc, curr) => {
+    if (curr.includes(pattern)) acc.push(curr);
+    return acc
+  }, []);
+  res.send(
+    result.map(word => `${word} `).join('')
+  )
+})
+
+router.post('/result', (req, res) => {
+  const word = req.body.word
+  const result = req.body.result
+  fs.writeFile('logs.txt', word + " -> " + result + '\n', { flag: 'a' }, (err) => {
+    if (err) throw err
+});
+  res.sendStatus(200);
+})
 
 router.get('/account/info', authenticateToken, (req, res) => {
   const reqUser = req.user.username;

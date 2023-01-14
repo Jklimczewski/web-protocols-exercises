@@ -1,10 +1,11 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { HangmanDrawing } from "./HangmanDrawing"
 import { HangmanWord } from "./HangmanWord"
 import { Keyboard } from "./Keyboard"
 import words from "./wordList.json"
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
 const cookies = new Cookies();
 
 function getWord() {
@@ -16,11 +17,12 @@ function Game() {
   const token = cookies.get("TOKEN")
   const [wordToGuess, setWordToGuess] = useState(getWord)
   const [guessedLetters, setGuessedLetters] = useState([])
+  const [temp, setTemp] = useState("")
 
   const incorrectLetters = guessedLetters.filter(
     letter => !wordToGuess.includes(letter)
   )
-
+    
   const isLoser = incorrectLetters.length >= 6
   const isWinner = wordToGuess
     .split("")
@@ -34,6 +36,13 @@ function Game() {
     },
     [guessedLetters, isWinner, isLoser]
   )
+
+  useEffect(() => {
+    if (isLoser || isWinner) setTemp("x")
+  }, [isLoser, isWinner])
+  useEffect(() => {
+    if (temp === "x") axios.post("https://localhost:5000/result", {word: wordToGuess, result: isWinner ? "WON" : "LOST"})
+  }, [temp])
 
   const handleExit = () => {
     navigate("/account")

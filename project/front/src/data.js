@@ -13,7 +13,7 @@ function Data() {
     const [updateInfo, setUpdate] = useState("");
 
     useEffect(() => {
-        axios.get("http://localhost:5000/account/info",  
+        axios.get("https://localhost:5000/account/info",  
             { headers: { Authorization: `Bearer ${token}`} })
             .then(res => setInfo("your current username: " + res.data))
             .catch(err => console.alert(err.response.data))
@@ -35,7 +35,7 @@ function Data() {
                     setTimeout(() => {
                         axios({
                             method: 'put',
-                            url: "http://localhost:5000/account/update",
+                            url: "https://localhost:5000/account/update",
                             headers: { Authorization: `Bearer ${token}`}, 
                             data: values
                         }).then(res => {

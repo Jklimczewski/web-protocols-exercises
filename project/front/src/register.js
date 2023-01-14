@@ -23,7 +23,7 @@ function Register() {
               })}
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
-                    axios.post("http://localhost:5000/register", values)
+                    axios.post("https://localhost:5000/register", values)
                         .then(res => {
                             setRegister(res.statusText);
                             setTimeout(() => {
