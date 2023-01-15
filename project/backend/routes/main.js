@@ -10,6 +10,11 @@ const router = express.Router();
 const users = [];
 const wordList = require("../../front/src/game/wordList.json")
 
+router.get('/words', (req, res) => {
+  res.send(
+    wordList.map(word => `${word} `).join('')
+  )
+})
 
 router.post('/words', (req, res) => {
   const pattern = req.body.pattern

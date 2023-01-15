@@ -7,14 +7,22 @@ function Words() {
     const [words, showWords] = useState("");
     
     const handleSearch = () => {
-        axios.post(`https://localhost:5000/words`, { pattern: inputted})
+        if (inputted === "") {
+            axios.get(`https://localhost:5000/words`)
             .then(res => showWords(res.data))
             .catch(err => showWords(err.response.data));
+        }
+        else {
+            axios.post(`https://localhost:5000/words`, { pattern: inputted})
+            .then(res => showWords(res.data))
+            .catch(err => showWords(err.response.data));
+        }
     }
     const handler = (event) => {
         setInput(event.target.value);
     }
     return (
+
         <>
             <h1>Type what should the word contain</h1>
             <input type='text' onChange={handler}></input>
@@ -24,7 +32,10 @@ function Words() {
             <br></br>
             <p>Filtered words: </p>
             <ul>
-                {words.split(" ").map(el => (<li>{el}</li>))}
+                {words.split(" ").map(el => {
+                    if (el) return (<li>{el}</li>)
+                    else return null
+                })}
             </ul>
         </>
         
