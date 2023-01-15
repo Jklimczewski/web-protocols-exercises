@@ -126,28 +126,8 @@ router.put('/account/update', authenticateToken, async (req, response) => {
       } catch {
         response.status(500).send();
       }
-  }
-}))
-  // try {
-  //   let user;
-  //   if (req.body.passwordChange == "" && req.body.usernameChange == "") return res.status(201).send();
-  //   else if (req.body.passwordChange == "") {
-  //     user = { username: req.body.usernameChange, password: req.user.password };
-  //   }
-  //   else if (req.body.usernameChange == "") {
-  //     const hashedPassword = await bcrypt.hash(req.body.passwordChange, 10);
-  //     user = { username: req.user.username, password: hashedPassword };
-  //   }
-  //   else {
-  //     const hashedPassword = await bcrypt.hash(req.body.passwordChange, 10);
-  //     user = { username: req.body.usernameChange, password: hashedPassword };
-  //   }
-  //   users.splice(index, 1);
-  //   users.push(user);
-  //   res.status(201).send();
-  // } catch {
-  //   res.status(500).send();
-  // }
+    }
+  }))
 })
 
 router.delete('/account/delete', authenticateToken, async (req, response) => {
