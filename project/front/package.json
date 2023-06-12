@@ -17,7 +17,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "set HTTPS=true&&set SSL_CRT_FILE=C:/Users/kuba/test_certyfikat&&set SSL_KEY_FILE=C:/Users/kuba/test_key&&react-scripts start",
+    "start": "set HTTPS=true&&set SSL_CRT_FILE=C:/Users/kukli/cert&&set SSL_KEY_FILE=C:/Users/kukli/key&&react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
